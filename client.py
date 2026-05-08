@@ -1,11 +1,14 @@
 import socket
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(('127.0.0.1', 12000))
+server_add = ('127.0.0.1', 12000)
 
-client.sendall(b"Hello from client!")
+cs = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+cs.connect(server_add)
 
-response = client.recv(1024).decode()
-print(f"Server says: {response}")
+username = input("Enter your name: ")
+cs.sendall(username.encode('ascii'))
 
-client.close()
+response = cs.recv(1024)
+print("Server says:", response.decode('ascii'))
+
+cs.close()

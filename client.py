@@ -11,4 +11,8 @@ cs.sendall(username.encode('ascii'))
 response = cs.recv(1024)
 print("Server says:", response.decode('ascii'))
 
+<<<<<<< HEAD
 cs.close()
+=======
+cs.close()
+>>>>>>> ad1fa95b2909b62be28a378a5fe24383c5c118e3

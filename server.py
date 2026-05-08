@@ -2,6 +2,7 @@ import socket
 import json
 import urllib.request
 
+<<<<<<< HEAD
 def fetch_reference_data():
     print("Fetching reference data from TheMealDB...")
     categories = []
@@ -37,6 +38,8 @@ def fetch_reference_data():
 
 fetch_reference_data()
 
+=======
+>>>>>>> ad1fa95b2909b62be28a378a5fe24383c5c118e3
 ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 ss.bind(('127.0.0.1', 12000))
 ss.listen(1)
@@ -51,4 +54,8 @@ print(f"Client name: {username}")
 conn.sendall(f"Welcome {username}!".encode('ascii'))
 
 conn.close()
+<<<<<<< HEAD
 ss.close()
+=======
+ss.close()
+>>>>>>> ad1fa95b2909b62be28a378a5fe24383c5c118e3

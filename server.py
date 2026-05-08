@@ -1,17 +1,17 @@
 import socket
 
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-server.bind(('127.0.0.1', 12000))
-server.listen(1)
+ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ss.bind(('127.0.0.1', 12000))
+ss.listen(1)
 print("Server listening on port 12000...")
 
-conn, addr = server.accept()
+conn, addr = ss.accept()
 print(f"Client connected from {addr}")
 
-msg = conn.recv(1024).decode()
-print(f"Received: {msg}")
+username = conn.recv(1024).decode('ascii')
+print(f"Client name: {username}")
 
-conn.sendall(b"Hello from server!")
+conn.sendall(f"Welcome {username}!".encode('ascii'))
+
 conn.close()
-server.close()
+ss.close()

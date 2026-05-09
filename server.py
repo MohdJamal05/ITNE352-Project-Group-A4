@@ -1,7 +1,7 @@
 import socket
 import json
 import urllib.request
-
+import threading
 
 
 def fetch_reference_data():
@@ -166,22 +166,20 @@ def handle_client(conn, cache):
     print(f"[-] '{username}' disconnected.")
 
 
+
+
 #main
 cache = fetch_reference_data()
-
 
 ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 ss.bind(('127.0.0.1', 12000))
-ss.listen(1)
+ss.listen(5)
 print("Server listening on port 12000...")
 
-conn, addr = ss.accept()
-print(f"Client connected from {addr}")
-
-handle_client(conn, cache)
-
-
-
-
-ss.close()
+while True:
+    conn, addr = ss.accept()
+    print(f"[+] New connection from {addr}")
+    thread = threading.Thread(target=handle_client, args=(conn, cache))
+    thread.daemon = True
+    thread.start()

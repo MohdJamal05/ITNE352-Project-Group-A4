@@ -11,6 +11,7 @@ cs.sendall(username.encode('ascii'))
 response = cs.recv(1024)
 print("Server says:", response.decode('ascii'))
 
+<<<<<<< HEAD
 # ── Stage 4 & 5: Added helpers ────────────────────────────────────────
  
 VALID_CATEGORIES = ['Beef', 'Chicken', 'Seafood', 'Vegetarian', 'Dessert', 'Pasta', 'Breakfast']
@@ -215,3 +216,8 @@ def main_menu(sock):
  
 main_menu(cs)
 cs.close()
+=======
+
+cs.close()
+
+>>>>>>> e814237dcc9d54348125511d226ca3b6cf1dacda

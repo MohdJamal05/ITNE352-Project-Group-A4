@@ -2,7 +2,10 @@ import socket
 import json
 import urllib.request
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> e814237dcc9d54348125511d226ca3b6cf1dacda
 def fetch_reference_data():
     print("Fetching reference data from TheMealDB...")
     categories = []
@@ -37,6 +40,7 @@ def fetch_reference_data():
 
 
 
+<<<<<<< HEAD
 BASE_URL = "https://www.themealdb.com/api/json/v1/1"
 
 def send_msg(conn, payload):
@@ -168,6 +172,8 @@ def handle_client(conn, cache):
 #main
 cache = fetch_reference_data()
 
+=======
+>>>>>>> e814237dcc9d54348125511d226ca3b6cf1dacda
 ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 ss.bind(('127.0.0.1', 12000))
@@ -179,4 +185,12 @@ print(f"Client connected from {addr}")
 
 handle_client(conn, cache)
 
+<<<<<<< HEAD
 ss.close()
+=======
+conn.sendall(f"Welcome {username}!".encode('ascii'))
+
+conn.close()
+
+ss.close()
+>>>>>>> e814237dcc9d54348125511d226ca3b6cf1dacda

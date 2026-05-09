@@ -4,7 +4,6 @@ import urllib.request
 
 
 
-
 def fetch_reference_data():
     print("Fetching reference data from TheMealDB...")
     categories = []
@@ -182,9 +181,7 @@ print(f"Client connected from {addr}")
 
 handle_client(conn, cache)
 
-ss.close()
-conn.sendall(f"Welcome {username}!".encode('ascii'))
 
-conn.close()
+
 
 ss.close()

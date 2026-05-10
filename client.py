@@ -174,7 +174,6 @@ def reference_menu(sock):
         show_header("Reference Menu")
         choice = pick([
             "List all categories",
-            
             "List all areas",
             "List all ingredients",
             "Back to main menu"

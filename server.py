@@ -10,48 +10,32 @@ def fetch_reference_data():
     areas = []
     ingredients = []
     try:
-        cat_url = "https://www.themealdb.com/api/json/v1/1/categories.php"
+        cat_url = "https://www.themealdb.com/api/json/v1/1/list.php?c=list"
         with urllib.request.urlopen(cat_url) as response:
             data = json.loads(response.read().decode())
-
             categories = [
-        {
-            'name': m['strCategory'],
-            'description': m['strCategoryDescription']
-        }
-        for m in data['categories']
-    ]
+                {'name': m['strCategory']}
+                for m in data['meals']
+            ]
 
         area_url = "https://www.themealdb.com/api/json/v1/1/list.php?a=list"
         with urllib.request.urlopen(area_url) as response:
             data = json.loads(response.read().decode())
-            allowed_areas = [
-            'Italian',
-            'Indian',
-            'Mexican',
-            'Japanese',
-            'Moroccan',
-            'British',
-            'American',
-            'Thai'
-
-             ]
-            areas = [
-              m['strArea']
-              for m in data['meals']
-              
-               if m['strArea'] in allowed_areas
-                ]
+            areas = [m['strArea'] for m in data['meals']]
 
         ing_url = "https://www.themealdb.com/api/json/v1/1/list.php?i=list"
         with urllib.request.urlopen(ing_url) as response:
             data = json.loads(response.read().decode())
-            ingredients = [m['strIngredient'] for m in data['meals']]  # FIX 1
+            ingredients = [m['strIngredient'] for m in data['meals']]
 
-        reference = {'categories': categories, 'areas': areas, 'ingredients': ingredients}  # full list in memory
+        reference = {'categories': categories, 'areas': areas, 'ingredients': ingredients}
 
         with open('reference_A4.json', 'w') as f:
-          json.dump({'categories': categories, 'areas': areas, 'ingredients': ingredients[:50]}, f, indent=2)  # cap only the file
+            json.dump({
+                'categories': categories,
+                'areas': areas,
+                'ingredients': ingredients[:50]
+            }, f, indent=2)
 
         print("Reference data saved to reference_A4.json")
         return reference

@@ -13,21 +13,22 @@ def fetch_reference_data():
         cat_url = "https://www.themealdb.com/api/json/v1/1/list.php?c=list"
         with urllib.request.urlopen(cat_url) as response:
             data = json.loads(response.read().decode())
-            categories = data['meals']
+            categories = [m['strCategory'] for m in data['meals']]  # FIX 1
 
         area_url = "https://www.themealdb.com/api/json/v1/1/list.php?a=list"
         with urllib.request.urlopen(area_url) as response:
             data = json.loads(response.read().decode())
-            areas = data['meals']
+            areas = [m['strArea'] for m in data['meals']]  # FIX 1
 
         ing_url = "https://www.themealdb.com/api/json/v1/1/list.php?i=list"
         with urllib.request.urlopen(ing_url) as response:
             data = json.loads(response.read().decode())
-            ingredients = data['meals']
-        reference = {'categories': categories, 'areas': areas, 'ingredients': ingredients}
+            ingredients = [m['strIngredient'] for m in data['meals']]  # FIX 1
+
+        reference = {'categories': categories, 'areas': areas, 'ingredients': ingredients}  # full list in memory
 
         with open('reference_A4.json', 'w') as f:
-            json.dump(reference, f, indent=2)
+          json.dump({'categories': categories, 'areas': areas, 'ingredients': ingredients[:50]}, f, indent=2)  # cap only the file
 
         print("Reference data saved to reference_A4.json")
         return reference
@@ -37,8 +38,9 @@ def fetch_reference_data():
         return None
 
 
-
 BASE_URL = "https://www.themealdb.com/api/json/v1/1"
+
+
 
 def send_msg(conn, payload):
     data = json.dumps(payload).encode('utf-8')
@@ -102,10 +104,15 @@ def build_full_detail(meal):
         'strSource':       meal.get('strSource', ''),
         'strTags':         meal.get('strTags', '')
     }
+def save_json(username, option, data):
+    filename = f"{username}_{option}_A4.json"
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=2)
+    print(f"  [SAVED] {filename}")
 
 def handle_client(conn, cache):
     username = conn.recv(1024).decode('ascii')
-    print(f"Client name: {username}")
+    print(f"[+] Client connected: {username}")
     conn.sendall(f"Welcome {username}!".encode('ascii'))
 
     while True:
@@ -115,48 +122,69 @@ def handle_client(conn, cache):
 
         req_type = request.get('type', '')
         params   = request.get('params', '')
-        print(f"  [{username}] Request: {req_type}  Params: '{params}'")
 
         if req_type == 'GET_CATEGORIES':
+            print(f"  [{username}] GET_CATEGORIES  [from CACHE]")
             send_msg(conn, {'type': 'CATEGORIES', 'data': cache['categories']})
 
         elif req_type == 'GET_AREAS':
+            print(f"  [{username}] GET_AREAS  [from CACHE]")
             send_msg(conn, {'type': 'AREAS', 'data': cache['areas']})
 
         elif req_type == 'GET_INGREDIENTS':
+            print(f"  [{username}] GET_INGREDIENTS  [from CACHE]")
             send_msg(conn, {'type': 'INGREDIENTS', 'data': cache['ingredients'][:50]})
 
         elif req_type == 'SEARCH_BY_NAME':
+            print(f"  [{username}] SEARCH_BY_NAME  params='{params}'  [from API]")
             data  = fetch_url(f"{BASE_URL}/search.php?s={params}")
             meals = data.get('meals') if data else None
-            send_msg(conn, {'type': 'RECIPE_LIST', 'data': build_brief_list(meals)})
+            brief = build_brief_list(meals)
+            save_json(username, 'search_by_name', brief)
+            send_msg(conn, {'type': 'RECIPE_LIST', 'data': brief})
 
         elif req_type == 'FILTER_BY_CATEGORY':
+            print(f"  [{username}] FILTER_BY_CATEGORY  params='{params}'  [from API]")
             data  = fetch_url(f"{BASE_URL}/filter.php?c={params}")
             meals = data.get('meals') if data else None
-            send_msg(conn, {'type': 'RECIPE_LIST', 'data': build_brief_list(meals)})
+            brief = build_brief_list(meals)
+            save_json(username, 'filter_by_category', brief)
+            send_msg(conn, {'type': 'RECIPE_LIST', 'data': brief})
 
         elif req_type == 'FILTER_BY_AREA':
+            print(f"  [{username}] FILTER_BY_AREA  params='{params}'  [from API]")
             data  = fetch_url(f"{BASE_URL}/filter.php?a={params}")
             meals = data.get('meals') if data else None
-            send_msg(conn, {'type': 'RECIPE_LIST', 'data': build_brief_list(meals)})
+            brief = build_brief_list(meals)
+            save_json(username, 'filter_by_area', brief)
+            send_msg(conn, {'type': 'RECIPE_LIST', 'data': brief})
 
         elif req_type == 'FILTER_BY_INGREDIENT':
+            print(f"  [{username}] FILTER_BY_INGREDIENT  params='{params}'  [from API]")
             data  = fetch_url(f"{BASE_URL}/filter.php?i={params}")
             meals = data.get('meals') if data else None
-            send_msg(conn, {'type': 'RECIPE_LIST', 'data': build_brief_list(meals)})
+            brief = build_brief_list(meals)
+            save_json(username, 'filter_by_ingredient', brief)
+            send_msg(conn, {'type': 'RECIPE_LIST', 'data': brief})
 
         elif req_type == 'RANDOM_RECIPE':
+            print(f"  [{username}] RANDOM_RECIPE  [from API]")
             data  = fetch_url(f"{BASE_URL}/random.php")
             meal  = data['meals'][0] if data and data.get('meals') else None
-            send_msg(conn, {'type': 'RECIPE_DETAIL', 'data': build_full_detail(meal)})
+            detail = build_full_detail(meal)
+            save_json(username, 'random_recipe', detail)
+            send_msg(conn, {'type': 'RECIPE_DETAIL', 'data': detail})
 
         elif req_type == 'GET_DETAIL':
+            print(f"  [{username}] GET_DETAIL  id='{params}'  [from API]")
             data  = fetch_url(f"{BASE_URL}/lookup.php?i={params}")
             meal  = data['meals'][0] if data and data.get('meals') else None
-            send_msg(conn, {'type': 'RECIPE_DETAIL', 'data': build_full_detail(meal)})
+            detail = build_full_detail(meal)
+            save_json(username, 'get_detail', detail)
+            send_msg(conn, {'type': 'RECIPE_DETAIL', 'data': detail})
 
         elif req_type == 'QUIT':
+            print(f"  [{username}] QUIT")
             break
 
         else:
@@ -164,7 +192,6 @@ def handle_client(conn, cache):
 
     conn.close()
     print(f"[-] '{username}' disconnected.")
-
 
 
 

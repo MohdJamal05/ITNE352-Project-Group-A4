@@ -74,13 +74,13 @@ def show_recipe_detail(d):
             line += w + " "
     if line.strip():
         print(line)
- 
+        
 def show_flat_list(items, key):
     if not items:
         print("  No data.")
         return
     for i, item in enumerate(items, 1):
-        print(f"  {i:>3}. {item.get(key, '')}")
+        print(f"  {i:>3}. {item}")
  
 def pick(options):
     for i, o in enumerate(options, 1):
@@ -217,5 +217,5 @@ main_menu(cs)
 cs.close()
 
 
-cs.close()
+
 

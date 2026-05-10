@@ -75,12 +75,13 @@ def show_recipe_detail(d):
     if line.strip():
         print(line)
         
-def show_flat_list(items, key):
+def show_flat_list(items, key=None):
     if not items:
         print("  No data.")
         return
     for i, item in enumerate(items, 1):
-        print(f"  {i:>3}. {item}")
+        val = item[key] if key and isinstance(item, dict) else item
+        print(f"  {i:>3}. {val}")
  
 def pick(options):
     for i, o in enumerate(options, 1):
@@ -173,6 +174,7 @@ def reference_menu(sock):
         show_header("Reference Menu")
         choice = pick([
             "List all categories",
+            
             "List all areas",
             "List all ingredients",
             "Back to main menu"
@@ -182,19 +184,19 @@ def reference_menu(sock):
             resp = recv_msg(sock)
             if resp and resp['type'] == 'CATEGORIES':
                 show_header("All Categories")
-                show_flat_list([{'strCategory': c} for c in resp['data']], 'strCategory')
+                show_flat_list(resp['data'], 'name')
         elif choice == 2:
             send_msg(sock, {'type': 'GET_AREAS', 'params': ''})
             resp = recv_msg(sock)
             if resp and resp['type'] == 'AREAS':
                 show_header("All Areas")
-                show_flat_list([{'strArea': a} for a in resp['data']], 'strArea')
+                show_flat_list(resp['data'], None)
         elif choice == 3:
             send_msg(sock, {'type': 'GET_INGREDIENTS', 'params': ''})
             resp = recv_msg(sock)
             if resp and resp['type'] == 'INGREDIENTS':
                 show_header("Ingredients (first 50)")
-                show_flat_list([{'strIngredient': i} for i in resp['data']], 'strIngredient')
+                show_flat_list(resp['data'], None)
         elif choice == 4:
             return
  

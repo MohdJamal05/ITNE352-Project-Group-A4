@@ -10,15 +10,38 @@ def fetch_reference_data():
     areas = []
     ingredients = []
     try:
-        cat_url = "https://www.themealdb.com/api/json/v1/1/list.php?c=list"
+        cat_url = "https://www.themealdb.com/api/json/v1/1/categories.php"
         with urllib.request.urlopen(cat_url) as response:
             data = json.loads(response.read().decode())
-            categories = [m['strCategory'] for m in data['meals']]  # FIX 1
+
+            categories = [
+        {
+            'name': m['strCategory'],
+            'description': m['strCategoryDescription']
+        }
+        for m in data['categories']
+    ]
 
         area_url = "https://www.themealdb.com/api/json/v1/1/list.php?a=list"
         with urllib.request.urlopen(area_url) as response:
             data = json.loads(response.read().decode())
-            areas = [m['strArea'] for m in data['meals']]  # FIX 1
+            allowed_areas = [
+            'Italian',
+            'Indian',
+            'Mexican',
+            'Japanese',
+            'Moroccan',
+            'British',
+            'American',
+            'Thai'
+
+             ]
+            areas = [
+              m['strArea']
+              for m in data['meals']
+              
+               if m['strArea'] in allowed_areas
+                ]
 
         ing_url = "https://www.themealdb.com/api/json/v1/1/list.php?i=list"
         with urllib.request.urlopen(ing_url) as response:

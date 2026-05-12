@@ -77,8 +77,16 @@ class MealDBClient:
         return self.fetch(f"{self.BASE_URL}/lookup.php?i={meal_id}")
 
     def get_categories(self) -> list:
-        data = self.fetch(f"{self.BASE_URL}/list.php?c=list")
-        return [{'name': m['strCategory']} for m in data['meals']] if data else []
+        data = self.fetch(f"{self.BASE_URL}/categories.php")
+        if not data:
+            return []
+        return [
+            {
+                'name':        m['strCategory'],
+                'description': m['strCategoryDescription']
+            }
+            for m in data['categories']
+        ]
 
     def get_areas(self) -> list:
         data = self.fetch(f"{self.BASE_URL}/list.php?a=list")
@@ -248,7 +256,6 @@ class ClientHandler:
         return True
 
     # ── request handlers ────────────────────────────────────────────
-
     def _handle_get_categories(self, _):
         print(f"  [{self._username}] GET_CATEGORIES  [from CACHE]")
         MessageHelper.send(self._conn,

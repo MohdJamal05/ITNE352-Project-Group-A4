@@ -1,8 +1,8 @@
 # ITNE352-Project-Group-A4
-student names: 
-1-layla khalil ID:202302358
-2-mohammed jamal ID:202302745
-
+| Name | Student ID |
+|------|------------|
+| layla khalil | 202302358 |
+| Mohammed jamal | 202302745 |
 
 A Python socket-based client-server application that lets multiple users search and browse recipes from [TheMealDB](https://www.themealdb.com) API in real time.
 

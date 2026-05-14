@@ -84,15 +84,6 @@ ITNE352-PROJECT-GROUP-A4/
 │
 ├── server.py                        # Server — handles all clients and API calls
 ├── client.py                        # Client — interactive menu interface
-├── reference_A4.json                # Auto-generated on server startup
-│
-├── <name>_search_by_name_A4.json    # Saved per recipe request (see below)
-├── <name>_filter_by_category_A4.json
-├── <name>_filter_by_area_A4.json
-├── <name>_filter_by_ingredient_A4.json
-├── <name>_random_recipe_A4.json
-├── <name>_get_detail_A4.json
-│
 └── README.md
 ```
 

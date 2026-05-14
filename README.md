@@ -41,7 +41,7 @@ The server connects to TheMealDB API and handles multiple clients simultaneously
 ```bash
 python server.py
 ```
-The server will fetch reference data from TheMealDB and save it to `reference_A4.json`, then start listening on `127.0.0.1:12000`.
+The server will fetch reference data from TheMealDB and save it to `reference_A4.json`, then start listening on `127.0.0.1:12000`
 
 ### 2. Start the client (in a separate terminal)
 ```bash
